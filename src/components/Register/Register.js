@@ -1,34 +1,47 @@
-import React, { useContext } from "react";
-import "./Login.css";
+import React, { useContext, useState } from "react";
+import "./Register.css";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../providers/AuthProvider";
 
-const LogIn = () => {
+const Register = () => {
+    const [error, setError] = useState("");
+    const { createUserSignIn } = useContext(AuthContext);
 
 
-    const { logInUser } = useContext(AuthContext);
 
-    const handleLogIn = (event) => {
+    const handleregister = (event) => {
         event.preventDefault();
         const form = event.target;
         const email = form.email.value;
         const password = form.password.value;
-
-        logInUser(email, password)
+        const confirm = form.confirm.value;
+       
+        if (password !== confirm) {
+            setError('Your password did not match');
+            return;
+        }
+        else if (password.length < 6) {
+            setError('Your password must be at least 6 characters');
+            return;
+        }
+        setError('')
+        createUserSignIn(email, password)
             .then(result => {
                 const user = result.user;
                 console.log(user);
                 form.reset();
             })
             .catch(error => {
-            console.log(error);
-        })
+                console.log(error);
+                setError(error.message)
+            })
     }
+
 
   return (
     <div className="form-container p-12">
-      <h2 className="form-title text-center">login</h2>
-      <form onSubmit={handleLogIn}>
+      <h2 className="form-title text-center">Register</h2>
+      <form onSubmit={handleregister}>
         <div className="form-control mt-4">
           <label htmlFor="email">Email</label>
           <input
@@ -49,11 +62,22 @@ const LogIn = () => {
             required
           />
         </div>
-        <input className="btn-login" type="submit" value="Login"></input>
+        <div className="form-control mt-4">
+          <label htmlFor="password">Confirm Password</label>
+          <input
+            type="password"
+            name="confirm"
+            id="confirm"
+            placeholder="confirm password"
+            required
+          />
+        </div>
+              <input className="btn-login" type="submit" value="Register"></input>
+              <p className="text-red-700 mt-2">{error}</p>
         <p className="mt-6">
-          <span className=" text-[#2A414F]">New to Ema-jon? </span>
-          <Link to="/register">
-            <span className="text-[#FF9900;]">Create New Account</span>
+          <span className=" text-[#2A414F]">Already have an account?</span>
+          <Link to="/login">
+            <span className="text-[#FF9900]">Login</span>
           </Link>
         </p>
         <div className="flex gap-6 items-center mt-12">
@@ -73,4 +97,4 @@ const LogIn = () => {
   );
 };
 
-export default LogIn;
+export default Register;

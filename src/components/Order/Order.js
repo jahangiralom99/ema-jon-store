@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Cart from "../Cart/Cart";
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import ReviewItem from "../ReviewItem/ReviewItem";
-import { removeFromDb } from "../../utilities/fakedb";
+import { deleteShoppingCart, removeFromDb } from "../../utilities/fakedb";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCreditCard } from "@fortawesome/free-solid-svg-icons";
 
 const Order = () => {
   const product = useLoaderData();
@@ -12,7 +14,12 @@ const Order = () => {
       const reamaining = cart.filter(pd => pd.id !== id);
       setCart(reamaining);
       removeFromDb(id)
-  };
+    };
+    
+    const hendelRemovedAllCart = () => {
+        setCart([])
+        deleteShoppingCart()
+    }
 
   return (
     <div className="shop-container bg-white">
@@ -26,7 +33,15 @@ const Order = () => {
         ))}
       </div>
       <div className="cart-container">
-        <Cart cart={cart}></Cart>
+              <Cart cart={cart}
+              hendelRemovedAllCart={hendelRemovedAllCart}
+              >
+                  <Link to="/checkout">
+                  <button className="mt-5 text-white p-4 flex justify-between items-center h-[56px] w-full bg-[#FF9900] rounded-md"> <span>Proceed Checkout</span>
+                         <FontAwesomeIcon icon={faCreditCard} />
+                      </button>
+                  </Link>
+              </Cart>
       </div>
     </div>
   );
