@@ -1,29 +1,35 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import "./Login.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../providers/AuthProvider";
 
 const LogIn = () => {
+  const [show, setShow] = useState(false);
 
+  const { logInUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+  console.log(location);
 
-    const { logInUser } = useContext(AuthContext);
+  const from = location.state?.from?.pathname || "/";
 
-    const handleLogIn = (event) => {
-        event.preventDefault();
-        const form = event.target;
-        const email = form.email.value;
-        const password = form.password.value;
+  const handleLogIn = (event) => {
+    event.preventDefault();
+    const form = event.target;
+    const email = form.email.value;
+    const password = form.password.value;
 
-        logInUser(email, password)
-            .then(result => {
-                const user = result.user;
-                console.log(user);
-                form.reset();
-            })
-            .catch(error => {
-            console.log(error);
-        })
-    }
+    logInUser(email, password)
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+        form.reset();
+        navigate(from, { replace: true });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <div className="form-container p-12">
@@ -42,12 +48,17 @@ const LogIn = () => {
         <div className="form-control mt-4">
           <label htmlFor="password">Password</label>
           <input
-            type="password"
+            type={show ?"text" : "password"}
             name="password"
             id="password"
             placeholder="Your password"
             required
           />
+          <p onClick={()=>setShow(!show)}><small>
+            {
+              show ? <span>Hide Password</span> : <span>Show Password</span>
+                }
+          </small></p>
         </div>
         <input className="btn-login" type="submit" value="Login"></input>
         <p className="mt-6">

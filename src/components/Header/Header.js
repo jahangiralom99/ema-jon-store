@@ -6,7 +6,14 @@ import { AuthContext } from "../providers/AuthProvider";
 
 const Header = () => {
   // eslint-disable-next-line no-unused-vars
-  const { logOut } = useContext(AuthContext);
+  const { user, logOut } = useContext(AuthContext);
+  console.log(user);
+
+  const handleLogOut = () => {
+    logOut()
+      .then(() => {})
+      .catch((error) => console.error(error));
+  };
 
   return (
     <div className="header">
@@ -17,7 +24,17 @@ const Header = () => {
         <Link to="/inventory">Inventory</Link>
         <Link to="/login">Login</Link>
         <Link to="/register">Register</Link>
-        {}
+        {user && (
+          <span className="text-white">
+            {user.email}{" "}
+            <button
+              className="btn ml-5 hover:text-white text-black bg-white -btn-primary"
+              onClick={handleLogOut}
+            >
+              Log Out
+            </button>
+          </span>
+        )}
       </div>
     </div>
   );
